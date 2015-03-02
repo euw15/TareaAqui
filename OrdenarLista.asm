@@ -1,24 +1,20 @@
-; ----------------------------------------------------------------------------------------
-; Compile and link it with:nasm -felf decbin.asm && gcc decbin.o -o decbin
-; ----------------------------------------------------------------------------------------
+
 section .data
 	mensajeBienvenida: db 'Introduzca una lista', 10
 	
-
 
 section .bss
 	
 lista resb 256 					;reserva la lista
 i resb 256						;iterador
 cantidadCambios resb 8 			;Cantidad de cambios
-PrimerDato resb 31
-SegundoDato resb 31
-aux resb 8
+PrimerDato resb 31				;guarda el primerdato
+SegundoDato resb 31				;guarda el segundo dato
 
 
 section	.text
 
-global main
+global _start
 
 Setup: 
 	mov byte [i],  30h					;indice que indica el numero ACtual
@@ -27,7 +23,7 @@ Setup:
 	mov byte [cantidadCambios], 30h					;Cantidad de cambios hechos
 	ret
 
- main:
+ _start:
 	call Setup
 	mov  eax,4					;Prepara para escribir
  	mov  ebx,1		
@@ -39,16 +35,14 @@ Setup:
     mov  ebx,0		;desde stdin
     mov  ecx,lista	;lo guarda en el buffer.
     int    80h
-    jmp PrimerosNumeros
+    jmp PrimerosNumeros	;configura los primerso 2 numeros
 
-NuevoCiclo:
+NuevoCiclo:				;vuelve a recorrer la lista
 	call Setup
 	jmp PrimerosNumeros
 
-PrimerosNumeros:
-	add ecx , 0					;mueve el indice ecx
+PrimerosNumeros:				;configura los primeros 2 datos
 	mov al, byte[ecx] 			;obtiene el caracter
-	sub ecx , 0					;devuelve ecx
 	mov byte [PrimerDato] , al
 
 	add ecx , 2					;mueve el indice ecx
@@ -59,12 +53,12 @@ PrimerosNumeros:
 	mov byte [i] , 2
 
 	cmp byte [PrimerDato] , al
-	ja CompararPrimeros
+	ja CompararPrimeros			;analiza si es necesario cambiarlos
 
 	jmp Ciclo
 	
 
-CompararPrimeros:
+CompararPrimeros:				;Cambios los primeros datos
 	add ecx , 0					;mueve el indice ecx
 	mov byte [ecx], al			;obtiene el caracter
 	sub ecx , 0					;devuelve ecx
@@ -80,7 +74,7 @@ CompararPrimeros:
 
 	jmp Ciclo			;devuelve ecx
 
-Ciclo:
+Ciclo:							;Itera entre los numeros
 	xor dl, dl
 	xor al , al
 	add byte [i] , 2 
@@ -98,11 +92,11 @@ Ciclo:
  
 IniciarCiclo:
 	cmp byte [cantidadCambios], 30h
-	je MeCago
+	je InprimirResultado
 	jmp NuevoCiclo
 
 
-MeCago:
+InprimirResultado:
 	mov  eax,4					;Prepara para escribir
   	mov  ebx,1	
   	;add byte [i], 30h	
@@ -126,12 +120,10 @@ CambiarPosicion:
 
 	mov byte [SegundoDato], dl
 
-	jmp Ciclo			;devuelve ecx
-
-	
+	jmp Ciclo					;vuelve a ciclo
 
 
- Exit:
+ Exit:							;cierra el programa
   mov  eax,1
   mov  ebx,0 
   int  80h
