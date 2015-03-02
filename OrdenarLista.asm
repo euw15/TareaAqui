@@ -2,8 +2,7 @@
 ; Compile and link it with:nasm -felf decbin.asm && gcc decbin.o -o decbin
 ; ----------------------------------------------------------------------------------------
 section .data
-	cambiarNumero: db 'Cambiar Numero' ,10, 0
-	mensajeBienvenida: db 'Introduzca una lista', 0
+	mensajeBienvenida: db 'Introduzca una lista', 10
 	
 
 
@@ -30,11 +29,11 @@ Setup:
 
  main:
 	call Setup
-	;mov  eax,4					;Prepara para escribir
- 	;mov  ebx,1		
-  ;	mov  ecx,mensajeBienvenida		;indica el mensaje
-  ;	mov  edx,255
-  ;	int  80h						;llama kernel
+	mov  eax,4					;Prepara para escribir
+ 	mov  ebx,1		
+  	mov  ecx,mensajeBienvenida		;indica el mensaje
+  	mov  edx,255
+  	int  80h						;llama kernel
   	xor  ecx,ecx
 	mov  eax,3		;Prepara para leer
     mov  ebx,0		;desde stdin
